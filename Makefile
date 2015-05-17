@@ -9,6 +9,7 @@ INSTALL_INC	= $(INSTALL_DIR)/include
 CFLAGS	+= -g -ggdb
 CFLAGS	+= -Werror -Wall -Wextra -Wno-unused-parameter
 CFLAGS	+= -I.
+CFLAGS	+= -fPIC
 
 LDFLAGS	+= -L. -lpassfds
 
@@ -28,7 +29,7 @@ test-passfds: test-passfds.o libpassfds.so
 	$(CC) -o $@ $(filter-out %.so,$^) $(LDFLAGS)
 
 test:	test-passfds
-	./$^
+	LD_LIBRARY_PATH=. ./$^
 
 $(INSTALL_LIB)/libpassfds.so: libpassfds.so
 	install -m 0644 -D $^ $@
