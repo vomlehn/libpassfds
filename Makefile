@@ -41,6 +41,7 @@ install: $(INSTALL_LIB)/libpassfds.so \
 	$(INSTALL_INC)/passfds.h
 
 clean:
-	rm -f test-passfds test-passfds.o libpassfds.so sendfds.o recvfds.o
+	rm -f test-passfds test-passfds.o libpassfds.so sendfds.o recvfds.o \
+		$(INSTALL_INC)/passfds.h $(INSTALL_LIB)/libpassfds.so
 
 .PHONE: clean test install
