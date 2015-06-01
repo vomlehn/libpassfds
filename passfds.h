@@ -46,6 +46,13 @@
  *
  * Returns: The number of file descriptors received, if successful. Otherwise,
  *	-1, with errno set to provide more information.
+ *
+ * Pro tip: If you only have one file descriptor in a variable of type int,
+ * 	you can just take the address of that variable instead of using an
+ * 	array, e.g.:
+ *
+ * 		int my_fd;
+ * 		rc = recvfds(sockfd, &my_fd, 1);
  */
 extern ssize_t recvfds(int sockfd, int fds[], size_t n);
 
@@ -58,6 +65,9 @@ extern ssize_t recvfds(int sockfd, int fds[], size_t n);
  *
  * Returns: The number of file descriptors sent, if successful. Otherwise,
  *	-1, with errno set to provide more information.
+ *
+ * Pro tip: You can use the same approach as described in the section on
+ * 	recvfds() to avoid introducing an integer array.
  */
 extern ssize_t sendfds(int sockfd, int fds[], size_t n);
 #endif /* _PASSFDS_H_ */

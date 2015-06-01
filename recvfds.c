@@ -3,8 +3,9 @@
 
 #include <passfds-internal.h>
 
-#define SET_IOV		1
-
+/*
+ * Function to receive file descriptors over AF_LOCAL socket
+ */
 ssize_t recvfds(int sockfd, int fds[], size_t n)
 {
 	struct msghdr msghdr;
@@ -18,7 +19,10 @@ ssize_t recvfds(int sockfd, int fds[], size_t n)
 	char dummy[1];
 #endif
 
-	/* Now set up the message header */
+	/*
+	 * Set up the message header to indicate where the control message
+	 * should be stored.
+	 */
 	memset(&msghdr, 0, sizeof(msghdr));
 	msghdr.msg_control = buf;
 	msghdr.msg_controllen = sizeof(buf);
@@ -34,12 +38,22 @@ ssize_t recvfds(int sockfd, int fds[], size_t n)
 	msghdr.msg_iovlen = ARRAY_SIZE(iov);
 #endif
 
+	/*
+	 * Pull the message from the socket. Any data and ancillary data will
+	 * be filled in as a side effect.
+	 */
 	rc = recvmsg(sockfd, &msghdr, sizeof(msghdr));
 	if (rc != -1) {
 		rc = 0;
 
 		for (cmsghdr = CMSG_FIRSTHDR(&msghdr); cmsghdr != NULL;
 			cmsghdr = CMSG_NXTHDR(&msghdr, cmsghdr)) {
+			/*
+			 * If this is being used with sendfds(), this
+			 * conditional will always be true. Still, if more
+			 * types of ancillary data were being processed, thi
+			 * is where it would go.
+			 */
 			if (cmsghdr->cmsg_level == SOL_SOCKET &&
 				cmsghdr->cmsg_type == SCM_RIGHTS) {
 				msg_fds = CMSG_DATA(cmsghdr);

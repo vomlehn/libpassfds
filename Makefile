@@ -1,4 +1,8 @@
-# Makefile for passfds
+# Makefile for passfds. To build locally, just type "make". The make
+# install and clean targets use the following macros:
+# INSTALL_INC	Name of the directory into which the header file passfds.h
+#	should be installed
+# INSTALL_LIB	Name of the directory into which the library should be installed
 
 BUILD_DIR	= .
 INSTALL_DIR	= .

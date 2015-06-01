@@ -3,6 +3,9 @@
 
 #include <passfds-internal.h>
 
+/*
+ * Function to send file descriptors over an AF_LOCAL socket
+ */
 ssize_t sendfds(int sockfd, int fds[], size_t n)
 {
 	struct msghdr msghdr;
@@ -11,12 +14,16 @@ ssize_t sendfds(int sockfd, int fds[], size_t n)
 	size_t payload_size = n * sizeof(fds[0]);
 	char buf[CMSG_SPACE(payload_size)];
 	ssize_t rc;
+
 #if SEND_DATA
 	struct iovec iov[1];
 	char dummy[1];
 #endif
 
-	/* Set up the message header */
+	/*
+	 * Set up the message header. This is where the data and the
+	 * ancillary data to be send are described.
+	 */
 	memset(&msghdr, 0, sizeof(msghdr));
 	msghdr.msg_control = buf;
 	msghdr.msg_controllen = sizeof(buf);
@@ -32,7 +39,11 @@ ssize_t sendfds(int sockfd, int fds[], size_t n)
 	msghdr.msg_iovlen = ARRAY_SIZE(iov);
 #endif
 
-	/* Set up the control message header */
+	/*
+	 * Set up the control message header. If we were sending more than
+	 * one piece of ancillary data, we would use CMSG_NXTHDR() to
+	 * get to subsequent pieces of data.
+	 */
 	cmsghdr = CMSG_FIRSTHDR(&msghdr);
 	memset(cmsghdr, 0, sizeof(*cmsghdr));
 	cmsghdr->cmsg_level = SOL_SOCKET;
