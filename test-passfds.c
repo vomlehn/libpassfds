@@ -84,11 +84,16 @@ static int child(int sockfd)
 	do_pipe(from_parent);
 	parent_fds[0] = to_parent[0];
 	parent_fds[1] = from_parent[1];
+
 	rc = sendfds(sockfd, parent_fds, ARRAY_SIZE(parent_fds));
 	if (rc == -1) {
 		perror("sendfds");
 		exit(EXIT_FAILURE);
 	}
+
+	do_close(to_parent[0]);
+	do_close(from_parent[1]);
+
 	do_write(to_parent[1], "child");
 	do_read(from_parent[0], "child");
 
