@@ -58,7 +58,8 @@ ssize_t recvfds(int sockfd, int fds[], size_t n)
 				cmsghdr->cmsg_type == SCM_RIGHTS) {
 				msg_fds = CMSG_DATA(cmsghdr);
 				memcpy(fds, msg_fds, payload_size);
-				rc = cmsghdr->cmsg_len / sizeof(fds[0]);
+				rc = (cmsghdr->cmsg_len - CMSG_LEN(0)) /
+					sizeof(fds[0]);
 				break;
 			}
 		}

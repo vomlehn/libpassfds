@@ -90,6 +90,11 @@ static int child(int sockfd)
 		perror("sendfds");
 		exit(EXIT_FAILURE);
 	}
+	if (rc != ARRAY_SIZE(parent_fds)) {
+		fprintf(stderr, "Expected %zu file descriptors but have %zu\n",
+			ARRAY_SIZE(parent_fds), rc);
+		exit(EXIT_FAILURE);
+	}
 
 	do_close(to_parent[0]);
 	do_close(from_parent[1]);
@@ -120,6 +125,12 @@ static int parent(int sockfd)
 		perror("sendfds");
 		exit(EXIT_FAILURE);
 	}
+	if (rc != ARRAY_SIZE(parent_fds)) {
+		fprintf(stderr, "Expected %zu file descriptors but have %zu\n",
+			ARRAY_SIZE(parent_fds), rc);
+		exit(EXIT_FAILURE);
+	}
+
 	do_read(parent_fds[0], "parent");
 	do_write(parent_fds[1], "parent");
 
